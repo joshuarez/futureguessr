@@ -4,356 +4,272 @@
 <meta name="google-adsense-account" content="ca-pub-3511066087770754">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Future Predicter</title>
+<title>Future Predictor - Fun Fortune Generator</title>
+<meta name="description" content="Generate your fun future prediction instantly. Single or group futures with rarity tiers, fortune scores and achievements. For entertainment purposes only.">
+
+
 
 <style>
 :root{
-  /* PREMIUM LIGHT PINK GRADIENT */
-  --bg: linear-gradient(135deg, #ffd6ec 0%, #ffc2e2 40%, #ffb3da 70%, #ffa6d4 100%);
-  --card:#ffffff;
-  --input:#fff0f7;
-  --text:#111;
-  --accent:#6c5ce7;
-  --accent2:#00cec9;
-  --gold:#ffd700;
+--bg:#ffd6eb;
+--card:#ffffff;
+--btn:#ff4fa3;
+--btnText:#ffffff;
+--text:#222;
 }
 
 body.dark{
-  --bg:#0c1025;
-  --card:#1a1f3d;
-  --input:#23285a;
-  --text:#f1f1f1;
-  --accent:#a29bfe;
-  --accent2:#00cec9;
-  --gold:#ffdf6b;
+--bg:#0f0f1a;
+--card:#1e1e2f;
+--btn:#ff4fa3;
+--btnText:#fff;
+--text:#fff;
 }
 
 body{
-  margin:0;
-  font-family:'Segoe UI',sans-serif;
-  background:var(--bg);
-  color:var(--text);
-  transition:0.4s;
-  overflow-x:hidden;
+margin:0;
+font-family:Arial, Helvetica, sans-serif;
+background:var(--bg);
+color:var(--text);
+transition:0.4s;
+text-align:center;
+padding-bottom:100px;
 }
-
-/* Premium shimmer overlay (light mode only) */
-body:not(.dark)::before{
-  content:"";
-  position:fixed;
-  inset:0;
-  background:radial-gradient(circle at 20% 30%, rgba(255,255,255,0.5), transparent 40%),
-             radial-gradient(circle at 80% 70%, rgba(255,255,255,0.4), transparent 40%);
-  pointer-events:none;
-  z-index:-1;
-}
-
-/* Decorative glow orbs */
-.orb{
-  position:fixed;
-  border-radius:50%;
-  filter:blur(100px);
-  opacity:0.4;
-  z-index:-2;
-}
-.orb1{width:400px;height:400px;background:#ff9ff3;top:-150px;left:-150px;}
-.orb2{width:400px;height:400px;background:#f368e0;bottom:-150px;right:-150px;}
 
 .container{
-  max-width:600px;
-  margin:auto;
-  padding:20px;
-  text-align:center;
+max-width:500px;
+margin:auto;
+padding:20px;
 }
 
 .card{
-  background:var(--card);
-  padding:25px;
-  border-radius:20px;
-  box-shadow:0 20px 60px rgba(0,0,0,0.18);
-  margin-top:20px;
-  position:relative;
-  overflow:hidden;
+background:var(--card);
+padding:20px;
+border-radius:20px;
+box-shadow:0 10px 30px rgba(0,0,0,0.1);
+margin-bottom:20px;
+transition:0.4s;
+}
+
+h1{
+margin-top:40px;
 }
 
 button{
-  background:var(--accent);
-  border:none;
-  color:white;
-  padding:12px 18px;
-  margin:6px;
-  border-radius:12px;
-  cursor:pointer;
-  transition:0.2s;
+background:var(--btn);
+color:var(--btnText);
+border:none;
+padding:12px 20px;
+border-radius:12px;
+cursor:pointer;
+margin:8px 5px;
+font-size:16px;
+transition:0.3s;
 }
-button:hover{transform:scale(1.05);}
+
+button:hover{
+opacity:0.85;
+}
 
 input{
-  padding:10px;
-  margin:6px;
-  border-radius:10px;
-  border:none;
-  width:85%;
-  background:var(--input);
-  color:var(--text);
+padding:12px;
+width:90%;
+border-radius:10px;
+border:1px solid #ccc;
+margin:8px 0;
+font-size:16px;
 }
 
-.hidden{display:none;}
-.top-right{position:fixed;top:15px;right:15px;}
+.toggle{
+position:fixed;
+top:10px;
+right:10px;
+z-index:999;
+}
 
 .result{
-  margin-top:15px;
-  font-size:18px;
-  min-height:60px;
+font-size:18px;
+margin-top:15px;
+min-height:60px;
 }
 
-/* Smooth loading bar */
-.loading-bar{
-  height:10px;
-  background:#ccc;
-  border-radius:20px;
-  overflow:hidden;
-  margin-top:10px;
-}
-.loading-fill{
-  height:100%;
-  width:0%;
-  background:linear-gradient(90deg,var(--accent),var(--accent2));
-  transition:width 0.3s linear;
-}
-
-/* Fortune */
-.fortune-bar{
-  height:10px;
-  background:#ccc;
-  border-radius:20px;
-  overflow:hidden;
-  margin-top:10px;
-}
-.fortune-fill{
-  height:100%;
-  width:0%;
-  background:linear-gradient(90deg,var(--accent),var(--accent2));
-  transition:width 1s ease;
-}
-
-/* Rarity tag */
 .rarity{
-  margin-top:10px;
-  font-weight:bold;
-  padding:6px 12px;
-  border-radius:20px;
-  display:inline-block;
-}
-.common{background:#f8d7da;color:#000;}
-.epic{background:#a29bfe;color:#fff;}
-.legendary{background:linear-gradient(45deg,#ffd700,#ff9f43);color:#000;}
-.mythic{background:#ff4757;color:#fff;}
-
-/* Achievement popup */
-.achievement{
-  position:fixed;
-  bottom:20px;
-  left:50%;
-  transform:translateX(-50%);
-  background:var(--gold);
-  color:#000;
-  padding:12px 20px;
-  border-radius:20px;
-  display:none;
-  animation:pop 0.4s ease;
-}
-@keyframes pop{
-  from{transform:translateX(-50%) scale(0.5);opacity:0;}
-  to{transform:translateX(-50%) scale(1);opacity:1;}
+font-weight:bold;
+margin-top:10px;
 }
 
-/* Glitter explosion */
-.particle{
-  position:absolute;
-  width:6px;
-  height:6px;
-  border-radius:50%;
-  pointer-events:none;
-  animation:explode 1s ease-out forwards;
+.score{
+margin-top:5px;
+font-size:14px;
+opacity:0.8;
 }
-@keyframes explode{
-  to{
-    transform:translate(var(--x),var(--y));
-    opacity:0;
-  }
+
+.footer{
+margin-top:40px;
+font-size:12px;
+opacity:0.7;
+}
+
+.loading-bar{
+height:8px;
+background:#ddd;
+border-radius:10px;
+overflow:hidden;
+margin-top:15px;
+display:none;
+}
+
+.loading-progress{
+height:100%;
+width:0%;
+background:linear-gradient(90deg,#ff4fa3,#ff8ccf);
+transition:width 0.2s linear;
+}
+
+@media(max-width:600px){
+h1{font-size:22px;}
+button{width:100%;}
 }
 </style>
 </head>
 
 <body>
 
-<div class="orb orb1"></div>
-<div class="orb orb2"></div>
-
-<button class="top-right" onclick="toggleTheme()">🌓</button>
+<button class="toggle" onclick="toggleMode()">🌙</button>
 
 <div class="container">
 
-<div id="home" class="card">
-<h1>🔮 Future Predicter</h1>
-<button onclick="showSingle()">Single Future</button>
-<button onclick="showGroup()">Group Future</button>
-<p>Total Predictions: <span id="counter">0</span></p>
-</div>
+<h1>🔮 Future Predictor</h1>
+<p>For entertainment purposes only.</p>
 
-<div id="single" class="card hidden">
-<h2>Single Future</h2>
+<div class="card">
+<h3>Single Future</h3>
 <input id="singleName" placeholder="Enter your name">
-<br>
-<button onclick="generateSingle()">Predict</button>
-<button onclick="goHome()">Back</button>
-<div class="loading-bar hidden" id="singleLoading">
-  <div class="loading-fill" id="singleLoadFill"></div>
-</div>
-<div class="result" id="singleResult"></div>
-<div id="singleRarity"></div>
-<div class="fortune-bar"><div class="fortune-fill" id="singleFortune"></div></div>
+<button onclick="generateSingle()">Reveal Future</button>
 </div>
 
-<div id="group" class="card hidden">
-<h2>Group Future</h2>
-<div id="groupInputs"></div>
-<button onclick="addInput()">Add Name</button><br>
-<button onclick="generateGroup()">Predict</button>
-<button onclick="goHome()">Back</button>
-<div class="loading-bar hidden" id="groupLoading">
-  <div class="loading-fill" id="groupLoadFill"></div>
+<div class="card">
+<h3>Group Future</h3>
+<div id="groupInputs">
+<input placeholder="Enter a name">
+<input placeholder="Enter another name">
 </div>
-<div class="result" id="groupResult"></div>
-<div id="groupRarity"></div>
-<div class="fortune-bar"><div class="fortune-fill" id="groupFortune"></div></div>
+<button onclick="addName()">Add Another Name</button>
+<button onclick="generateGroup()">Reveal Group Future</button>
+</div>
+
+<!-- Ad Space Top -->
+<div class="card">
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+     data-ad-slot="1234567890"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+</div>
+
+<div class="card">
+<div class="loading-bar" id="loadingBar">
+<div class="loading-progress" id="progress"></div>
+</div>
+
+<div class="result" id="result"></div>
+<div class="rarity" id="rarity"></div>
+<div class="score" id="score"></div>
+</div>
+
+<!-- Ad Space Bottom -->
+<div class="card">
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+     data-ad-slot="9876543210"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+</div>
+
+<div class="footer">
+<a href="privacy.html">Privacy Policy</a> | 
+<a href="about.html">About</a>
 </div>
 
 </div>
-
-<div class="achievement" id="achievementBox"></div>
 
 <script>
-// Counter
-let total = localStorage.getItem("totalPredictions") || 0;
-document.getElementById("counter").innerText = total;
+(adsbygoogle = window.adsbygoogle || []).push({});
 
-// Achievements
-function unlock(text){
-  const box=document.getElementById("achievementBox");
-  box.innerText="🏆 Achievement Unlocked: "+text;
-  box.style.display="block";
-  setTimeout(()=>box.style.display="none",3000);
+function toggleMode(){
+document.body.classList.toggle("dark");
 }
 
-// Glitter explosion
-function explode(card, big=false){
-  for(let i=0;i<(big?60:30);i++){
-    const p=document.createElement("div");
-    p.className="particle";
-    p.style.background=`hsl(${Math.random()*360},100%,60%)`;
-    p.style.setProperty("--x",(Math.random()*300-150)+"px");
-    p.style.setProperty("--y",(Math.random()*300-150)+"px");
-    card.appendChild(p);
-    setTimeout(()=>p.remove(),1000);
-  }
+function addName(){
+const input=document.createElement("input");
+input.placeholder="Enter another name";
+document.getElementById("groupInputs").appendChild(input);
 }
 
-// Smooth fake loading
-function fakeLoad(type, callback){
-  const load=document.getElementById(type+"Loading");
-  const fill=document.getElementById(type+"LoadFill");
-  load.classList.remove("hidden");
-  fill.style.width="0%";
-
-  let progress=0;
-  const interval=setInterval(()=>{
-    progress+=2 + Math.random()*3;
-    if(progress>100) progress=100;
-    fill.style.width=progress+"%";
-    if(progress>=100){
-      clearInterval(interval);
-      setTimeout(()=>{
-        load.classList.add("hidden");
-        callback();
-      },200);
-    }
-  },40);
+function smoothLoading(callback){
+let progress=0;
+document.getElementById("loadingBar").style.display="block";
+const bar=document.getElementById("progress");
+const interval=setInterval(()=>{
+progress+=1;
+bar.style.width=progress+"%";
+if(progress>=100){
+clearInterval(interval);
+callback();
+}
+},15);
 }
 
-// Data
-const subjects=["will summon","will invent","will dominate","will awaken","will discover"];
-const objects=["Skibidi Toilet","an interdimensional pizza empire","67 years of luck","a cat overlord","a glitter rocket"];
-const endings=["during a random Tuesday","while live on TikTok","because destiny said so","after saying watch this"];
+function randomOutcome(name,type){
+const rarities=["Common","Rare","Epic","Legendary","Mythic"];
+const rarity=rarities[Math.floor(Math.random()*rarities.length)];
+const score=Math.floor(Math.random()*1000)+1;
 
-function build(name){
-  return name+" "+subjects[Math.floor(Math.random()*subjects.length)]+" "+
-  objects[Math.floor(Math.random()*objects.length)]+" "+
-  endings[Math.floor(Math.random()*endings.length)]+".";
-}
+const outcomes=[
+"You will discover unexpected success.",
+"You will trip over nothing but recover gracefully.",
+"You will receive coal for Christmas.",
+"You will achieve greatness in year 67.",
+"Skibidi toilet will try to eat you.",
+"You will win something small but meaningful.",
+"You will accidentally go viral.",
+"You will unlock hidden potential.",
+"You will find luck in strange places."
+];
 
-function rarity(){
-  const r=Math.random();
-  if(r<0.05) return "Mythic";
-  if(r<0.2) return "Legendary";
-  if(r<0.4) return "Epic";
-  return "Common";
-}
+const outcome=outcomes[Math.floor(Math.random()*outcomes.length)];
 
-function apply(type,name){
-  fakeLoad(type,()=>{
-    const card=document.getElementById(type);
-    const result=document.getElementById(type+"Result");
-    const rarityBox=document.getElementById(type+"Rarity");
-    const fortune=document.getElementById(type+"Fortune");
-
-    const r=rarity();
-    result.innerText=build(name);
-
-    rarityBox.innerHTML=`<div class="rarity ${r.toLowerCase()}">${r} Result</div>`;
-
-    const score=Math.floor(Math.random()*101);
-    fortune.style.width=score+"%";
-
-    explode(card, r==="Mythic");
-
-    total++;
-    localStorage.setItem("totalPredictions",total);
-    document.getElementById("counter").innerText=total;
-
-    if(total==10) unlock("You saw 10 futures!");
-    if(r==="Mythic") unlock("Mythic Destiny!");
-  });
+return {text:name+" — "+outcome, rarity:rarity, score:score};
 }
 
 function generateSingle(){
-  const name=document.getElementById("singleName").value.trim();
-  if(!name) return;
-  apply("single",name);
+const name=document.getElementById("singleName").value.trim();
+if(!name)return;
+
+smoothLoading(()=>{
+const data=randomOutcome(name,"single");
+document.getElementById("result").innerText=data.text;
+document.getElementById("rarity").innerText="Rarity: "+data.rarity;
+document.getElementById("score").innerText="Fortune Score: "+data.score;
+});
 }
 
 function generateGroup(){
-  const inputs=document.querySelectorAll(".groupName");
-  const names=[...inputs].map(i=>i.value.trim()).filter(Boolean);
-  if(names.length==0) return;
-  apply("group",names.join(", "));
+const inputs=document.querySelectorAll("#groupInputs input");
+let names=[];
+inputs.forEach(i=>{if(i.value.trim())names.push(i.value.trim());});
+if(names.length===0)return;
+
+smoothLoading(()=>{
+const data=randomOutcome(names.join(", "),"group");
+document.getElementById("result").innerText=data.text;
+document.getElementById("rarity").innerText="Rarity: "+data.rarity;
+document.getElementById("score").innerText="Fortune Score: "+data.score;
+});
 }
-
-function addInput(){
-  const div=document.createElement("div");
-  div.innerHTML='<input class="groupName" placeholder="Enter name">';
-  document.getElementById("groupInputs").appendChild(div);
-}
-
-function showSingle(){document.getElementById("home").classList.add("hidden");document.getElementById("single").classList.remove("hidden");}
-function showGroup(){document.getElementById("home").classList.add("hidden");document.getElementById("group").classList.remove("hidden");}
-function goHome(){document.getElementById("single").classList.add("hidden");document.getElementById("group").classList.add("hidden");document.getElementById("home").classList.remove("hidden");}
-function toggleTheme(){document.body.classList.toggle("dark");}
-
-addInput();addInput();
 </script>
+
 </body>
 </html>
-
-
